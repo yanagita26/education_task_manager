@@ -2,6 +2,7 @@
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
+using TaskManager.Controllers;
 using TaskManager.Infos;
 using TaskManager.Models;
 
@@ -116,7 +117,7 @@ namespace TaskManager.Forms
         {
             if (dgvIchiran.Columns[e.ColumnIndex].DataPropertyName == "TASK_STATUS")
             {
-                if ((int)e.Value == 1)
+                if ((long)e.Value == 1)
                 {
                     e.Value = "新規";
                 }
@@ -152,7 +153,7 @@ namespace TaskManager.Forms
         /// </summary>
         private void init()
         {
-            taskModel = new TaskModel(Program.databaseIf);
+            taskModel = new TaskModel(DatabaseIf.Instance);
             dtpStartDate.Value = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             dtpEndDate.Value = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.DaysInMonth(DateTime.Today.Year, DateTime.Today.Month));
 
@@ -186,8 +187,8 @@ namespace TaskManager.Forms
             col = new DataGridViewTextBoxColumn();
             col.HeaderText = "日時";
             col.DataPropertyName = "TASK_DATE";
-            col.DefaultCellStyle.Format = "yyyy年MM月dd日";
             col.ReadOnly = true;
+            col.Width = 150;
             dgvIchiran.Columns.Add(col);
 
             col = new DataGridViewTextBoxColumn();

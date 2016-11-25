@@ -14,7 +14,7 @@ namespace TaskManager.Infos
         /// <summary>
         /// タスクキー
         /// </summary>
-        public int TaskKey { get; set; }
+        public long TaskKey { get; set; }
 
         /// <summary>
         /// タイトル
@@ -29,7 +29,7 @@ namespace TaskManager.Infos
         /// <summary>
         /// ステータス
         /// </summary>
-        public int TaskStatus{ get; set; }
+        public long TaskStatus{ get; set; }
 
         /// <summary>
         /// 詳細
@@ -47,12 +47,12 @@ namespace TaskManager.Infos
         /// <param name="row"></param>
         /// <returns></returns>
         public static TaskInfo Convert(DataRow row){
-            TaskInfo info = new TaskInfo();
-            info.TaskKey = (int)row["TASK_KEY"];
-            info.UpdatedAt = (DateTime)row["UPDATED_AT"];
+            var info = new TaskInfo();
+            info.TaskKey = (long)row["TASK_KEY"];
+            info.UpdatedAt = DateTime.Parse(row["UPDATED_AT"].ToString());
             info.Title = row["TITLE"].ToString();
-            info.TaskDate = (DateTime)row["TASK_DATE"];
-            info.TaskStatus = (int)row["TASK_STATUS"];
+            info.TaskDate = DateTime.Parse(row["TASK_DATE"].ToString());
+            info.TaskStatus = (long)row["TASK_STATUS"];
             info.TaskDetail = row["TASK_DETAIL"].ToString();
             return info;
         }

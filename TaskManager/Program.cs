@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
-using TaskManager.Forms;
 using TaskManager.Controllers;
+using TaskManager.Forms;
 
 namespace TaskManager
 {
+    /// <summary>
+    /// タスクマネージャー
+    /// </summary>
     public static class Program
     {
         /// <summary>
@@ -18,7 +19,16 @@ namespace TaskManager
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Application.Run(new TaskIchiranForm());
+
+            try
+            {
+                DatabaseIf.Instance.Connect();
+                Application.Run(new TaskIchiranForm());
+            }
+            finally
+            {
+                DatabaseIf.Instance.Disconnect();
+            }
         }
     }
 }

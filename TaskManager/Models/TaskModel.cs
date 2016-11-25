@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using TaskManager.Controllers;
 using TaskManager.Infos;
@@ -15,13 +13,31 @@ namespace TaskManager.Models
         /// <summary>
         /// データベースIF
         /// </summary>
-        private DatabaseIf datavaseIf; 
+        private DatabaseIf datavaseIf;
+
+        /// <summary>
+        /// 履歴テーブル作成
+        /// </summary>
+        public void CreateTable()
+        {
+            var sql = new StringBuilder();
+
+            sql.AppendLine("CREATE TABLE IF NOT EXISTS TASK(");
+            sql.AppendLine("TASK_KEY INTEGER  PRIMARY KEY AUTOINCREMENT");
+            sql.AppendLine(", UPDATED_AT TEXT");
+            sql.AppendLine(", TITLE TEXT");
+            sql.AppendLine(", TASK_DATE TEXT");
+            sql.AppendLine(", TASK_STATUS INTEGER");
+            sql.AppendLine(", TASK_DETAIL TEXT)");
+
+            datavaseIf.ExecuteSql(sql.ToString());
+        }
 
         /// <summary>
         /// 削除
         /// </summary>
         /// <param name="taskKey"></param>
-        public void delete(int taskKey)
+        public void delete(long taskKey)
         {
             StringBuilder sql = new StringBuilder();
 
@@ -41,6 +57,7 @@ namespace TaskManager.Models
         public TaskModel(DatabaseIf datavaseIf)
         {
             this.datavaseIf = datavaseIf;
+            CreateTable();
         }
 
         /// <summary>
@@ -54,7 +71,7 @@ namespace TaskManager.Models
             sql.AppendLine("UPDATE");
             sql.AppendLine("TASK");
             sql.AppendLine("SET");
-            sql.AppendLine("UPDATED_AT = GETDATE()");
+            sql.AppendLine("UPDATED_AT = datetime('now', 'localtime')");
             sql.AppendFormat(",TITLE = '{0}'", info.Title);
             sql.AppendFormat(",TASK_DATE = '{0}'", info.TaskDate);
             sql.AppendFormat(",TASK_STATUS = {0}", info.TaskStatus);
@@ -82,7 +99,7 @@ namespace TaskManager.Models
             sql.AppendLine(",TASK_STATUS");
             sql.AppendLine(",TASK_DETAIL)");
             sql.AppendLine("VALUES(");
-            sql.AppendLine("GETDATE()");
+            sql.AppendLine(" datetime('now', 'localtime')");
             sql.AppendFormat(",'{0}'", info.Title);
             sql.AppendFormat(",'{0}'", info.TaskDate);
             sql.AppendFormat(",{0}", info.TaskStatus);

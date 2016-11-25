@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using TaskManager.Controllers;
 using TaskManager.Infos;
 using TaskManager.Models;
 
@@ -46,6 +47,7 @@ namespace TaskManager.Forms
         private void TaskForm_Load(object sender, EventArgs e)
         {
             init();
+
             if (SelectedTaskInfo != null)
             {
                 read(SelectedTaskInfo);
@@ -111,7 +113,7 @@ namespace TaskManager.Forms
         /// </summary>
         private void init()
         {
-            taskModel = new TaskModel(Program.databaseIf);
+            taskModel = new TaskModel(DatabaseIf.Instance);
             rbStatusNew.Checked = true;
             dtpTaskDate.Value = DateTime.Now;
         }
@@ -124,7 +126,7 @@ namespace TaskManager.Forms
         /// 削除
         /// </summary>
         /// <param name="taskKey"></param>
-        private void deleteTask(int taskKey)
+        private void deleteTask(long taskKey)
         {
             taskModel.delete(taskKey);
         }
@@ -172,7 +174,7 @@ namespace TaskManager.Forms
 
             txtTaskDetail.Text = info.TaskDetail;
 
-            txtUpdatedAt.Text = info.UpdatedAt.ToShortDateString();
+            txtUpdatedAt.Text = info.UpdatedAt.ToString("yyyy年MM月dd日 HH時mm分ss秒");
         }
 
         #endregion

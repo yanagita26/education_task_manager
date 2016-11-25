@@ -1,5 +1,7 @@
 ﻿using System.Data;
-using System.Data.SqlClient;
+using System.Data.SQLite;
+using System.IO;
+using System.Windows.Forms;
 
 namespace TaskManager.Controllers
 {
@@ -8,34 +10,47 @@ namespace TaskManager.Controllers
     /// </summary>
     public class DatabaseIf
     {
+        /// <summary>
+        /// インスタンス
+        /// </summary>
+        private static DatabaseIf instance = new DatabaseIf(Path.Combine(Application.StartupPath, "task.db"));
+
+        /// <summary>
+        /// インスタンス
+        /// </summary>
+        public static DatabaseIf Instance { get { return instance; } }
+
         #region 
 
         /// <summary>
         /// コネクション
         /// </summary>
-        private SqlConnection sqlConnection;
+        private SQLiteConnection sqlConnection;
 
         #endregion
 
         /// <summary>
-        /// サーバ名
+        /// データベース
         /// </summary>
-        public string ServerName { get; set; }
+        public string DbFileName { get; set; }
 
         /// <summary>
-        /// ユーザ名
+        /// タイムアウト
         /// </summary>
-        public string UserName { get; set; }
+        public int Timeout { get; set; }
+
+        #region コンストラクタ
 
         /// <summary>
-        /// パスワード
+        /// コンストラクタ
         /// </summary>
-        public string Password { get; set; }
+        /// <param name="dbFileName"></param>
+        private DatabaseIf(string dbFileName)
+        {
+            DbFileName = dbFileName;
+        }
 
-        /// <summary>
-        /// データベース名称
-        /// </summary>
-        public string DatabaseName { get; set; }
+        #endregion
 
         #region メソッド
 
@@ -45,17 +60,13 @@ namespace TaskManager.Controllers
         /// <returns></returns>
         public void Connect()
         {
-            SqlConnectionStringBuilder scsb= new SqlConnectionStringBuilder();
+            var scsb= new SQLiteConnectionStringBuilder();
 
-            scsb.DataSource = ServerName;
-            scsb.UserID = UserName;
-            scsb.Password = Password;
-            scsb.InitialCatalog = DatabaseName;
+            scsb.DataSource = DbFileName;
+            scsb.DefaultTimeout = Timeout;
 
             if (sqlConnection != null) Disconnect();
-
-            sqlConnection = new SqlConnection(scsb.ConnectionString);
-
+            sqlConnection = new SQLiteConnection(scsb.ConnectionString);
             sqlConnection.Open();
         }
 
@@ -74,11 +85,11 @@ namespace TaskManager.Controllers
         /// <returns></returns>
         public DataTable ExecuteSql(string sql)
         {
-            using (SqlCommand sc = new SqlCommand(sql, sqlConnection))
+            using (var sc = new SQLiteCommand(sql, sqlConnection))
             {
-                using (SqlDataReader sdr = sc.ExecuteReader())
+                using (SQLiteDataReader sdr = sc.ExecuteReader())
                 {
-                    DataTable dt = new DataTable();
+                    var dt = new DataTable();
                     dt.Load(sdr);
                     return dt;
                 }
@@ -93,13 +104,12 @@ namespace TaskManager.Controllers
         /// <returns></returns>
         public int ExecuteSqlNonQuery(string sql)
         {
-            using (SqlCommand sc = new SqlCommand(sql, sqlConnection))
+            using (var sc = new SQLiteCommand(sql, sqlConnection))
             {
                 return sc.ExecuteNonQuery();
             }
         }
 
         #endregion
-
     }
 }
