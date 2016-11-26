@@ -1,3 +1,3 @@
 # education_task_manager
 
-教育用プロジェクト 柳田
+教育用プロジェクト yana
